@@ -1,41 +1,100 @@
-print("hello world")
-import random
-print("Welcome to the Password Generator!")
+import secrets
+import string
+from datetime import datetime
 
-letters=int(input("How many letters you want in your password?\n"))
-symbols=int(input("How many symbols you want in your password?\n"))
-numbers=int(input("How many numbers you want in your password?\n"))
+print("=" * 50)
+print("🔐 Secure Password Generator")
+print("=" * 50)
 
-if((letters<0) or (symbols<0) or (numbers<0)):
-    print("Invalid input.")
+# -----------------------------
+# User Input
+# -----------------------------
+length = int(input("Enter password length: "))
 
+if length <= 0:
+    print("Invalid length.")
+    exit()
+
+uppercase = input("Include Uppercase letters? (Y/N): ").upper()
+lowercase = input("Include Lowercase letters? (Y/N): ").upper()
+numbers = input("Include Numbers? (Y/N): ").upper()
+symbols = input("Include Symbols? (Y/N): ").upper()
+
+characters = ""
+
+if uppercase == "Y":
+    characters += string.ascii_uppercase
+
+if lowercase == "Y":
+    characters += string.ascii_lowercase
+
+if numbers == "Y":
+    characters += string.digits
+
+if symbols == "Y":
+    characters += "!@#$%^&*()-_=+[]{}?/"
+
+if characters == "":
+    print("Please select at least one character type.")
+    exit()
+
+# -----------------------------
+# Generate Password
+# -----------------------------
+password = ""
+
+for i in range(length):
+    password += secrets.choice(characters)
+
+# -----------------------------
+# Password Strength Checker
+# -----------------------------
+score = 0
+
+if length >= 8:
+    score += 1
+
+if length >= 12:
+    score += 1
+
+if any(c.isupper() for c in password):
+    score += 1
+
+if any(c.islower() for c in password):
+    score += 1
+
+if any(c.isdigit() for c in password):
+    score += 1
+
+if any(c in "!@#$%^&*()-_=+[]{}?/" for c in password):
+    score += 1
+
+if score <= 2:
+    strength = "Weak 🔴"
+elif score <= 4:
+    strength = "Medium 🟡"
 else:
-    list = []
+    strength = "Strong 🟢"
 
-    for i in range(0,letters):
-        random_letters = random.choice(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P','Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'])
-        list.append(random_letters)
+# -----------------------------
+# Display Password
+# -----------------------------
+print("\nGenerated Password:")
+print(password)
 
-    for i in range(0,symbols):
-        random_symbols = random.choice(['!', '#', '$', '%', '&', '(', ')', '*', '+'])
-        list.append(random_symbols)
+print("\nPassword Strength:", strength)
 
-    for i in range(0,numbers):
-        random_numbers = random.choice(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-        list.append(random_numbers)
+# -----------------------------
+# Save Password
+# -----------------------------
+save = input("\nSave password to file? (Y/N): ").upper()
 
-    print(f"List before shuffling : {list}")
+if save == "Y":
+    with open("password_history.txt", "a") as file:
+        file.write(
+            f"{datetime.now()} | {password} | {strength}\n"
+        )
 
-    random.shuffle(list)
+    print("Password saved successfully.")
 
-    print(f"List after shuffling : {list}")
-
-    if(len(list)==0):
-        print("No password generated.")
-
-    else:
-        password = ''
-        for i in list:
-            password = password + i
-
-        print(f"Your password is : {password}")
+print("\nThank you for using Secure Password Generator!")
