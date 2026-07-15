@@ -1,4 +1,4 @@
-# Password Generator
+# Smart Password Generator
 
 ## Description
 A Python application that generates secure random passwords based on user-defined length and character options.
